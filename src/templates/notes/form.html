@@ -4,7 +4,6 @@
 {% load wysiwyg %}
 {% wysiwyg_setup %}
 {% endblock %}
-{% load comments %}
 
 {% block content %}
 
@@ -32,76 +31,51 @@
             </nav>
         </div>
 
-        <div class="col-8">
 
         {% if form.errors %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger" role="alert">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
         {% endif %}
 
         {% if object %}
         <form action="{% url 'notes:update' object.pk %}" method="post" accept-charset="utf-8">
-        {% else %}
-        <form action="{% url 'notes:create' %}" method="post" accept-charset="utf-8">
-        {% endif %}
+            {% else %}
+            <form action="{% url 'notes:create' %}" method="post" accept-charset="utf-8">
+                {% endif %}
 
-            {% csrf_token %}
-            {% for field in form %}
-            <p>
-                {% if field.errors %}
-            	<div class="alert alert-danger" role="alert">
+                {% csrf_token %}
+                {% for field in form %}
+                <p>
+                    {% if field.errors %}
+                <div class="alert alert-danger" role="alert">
                     {{ field.errors }}
-            	</div>
+                </div>
                 {% endif %}
                 {{ field }}
-            </p>
-            {% endfor %}
-            <input type="hidden" name="next" value="{{ next }}" />
-
-        {% if object %}
-            <input class="btn btn-outline-dark" type="submit" value="Update Note"/>
-        {% else %}
-            <input class="btn btn-outline-dark" type="submit" value="Create Note"/>
-        {% endif %}
-        </form>
-
-        {% if object %}
-        <form action="{% url 'notes:delete' object.pk %}" method="post" id="delete-note-form">
-            {% csrf_token %}
-            <a class="btn btn-outline-dark" id="delete-note">
-                <i class="fa fa-trash" aria-hidden="true"></i>
-            </a>
-        </form>
-        {% endif %}
-
-            {% get_comment_list for object as comment_list %}
-                {% for comment in comment_list %}
-                    <div class="row">
-                        <div class="col-11" style="background-color: #2dbe60; border-radius: 5px; color: white; margin: 5px 15px; padding: 2px 5px;">
-                            {{ comment.submit_date }}
-                            <br>
-                            {{ comment.comment }}
-                        </div>
-                    </div>
+                </p>
                 {% endfor %}
-            {% get_comment_form for object as form %}
-              <form action="{% comment_form_target %}" method="post">
-                {% csrf_token %}
-                {{ form.comment }}
-                {{ form.honeypot }}
-                {{ form.content_type }}
-                {{ form.object_pk }}
-                {{ form.timestamp }}
-                {{ form.security_hash }}
-                <input type="hidden" name="next" value="{% url 'notes:update' object.id %}" />
-                <input class="btn btn-outline-dark" type="submit" value="Add comment" id="id_submit" />
-                </tr>
-              </form>
+                <input type="hidden" name="next" value="{{ next }}" />
 
-        </div>
+                {% if object %}
+                <input class="btn btn-outline-dark" type="submit" value="Update Note"/>
+                {% else %}
+                <input class="btn btn-outline-dark" type="submit" value="Create Note"/>
+                {% endif %}
+            </form>
+
+            {% if object %}
+            <form action="{% url 'notes:delete' object.pk %}" method="post" id="delete-note-form">
+                {% csrf_token %}
+                <a class="btn btn-outline-dark" id="delete-note">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </a>
+            </form>
+            {% endif %}
+        </form>
+
     </div>
 
 {% wysiwyg_editor "id_body" %}
